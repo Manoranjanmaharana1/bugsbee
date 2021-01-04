@@ -24,8 +24,12 @@ const NewsDash = () => {
         Firebase.database().ref('/').once('value').then((snapshot) => {
                 snapshot.forEach((children) => {
                     
-                   ls.push(children.toJSON()); 
-                   
+                   //ls.push(children.toJSON()); 
+                   children.forEach((child) => {
+                    
+                    ls.push(child.toJSON()); 
+                    
+                 });
                 });
                 shuffle(ls);
                 setData(ls);    
