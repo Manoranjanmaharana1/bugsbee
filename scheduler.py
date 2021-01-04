@@ -6,6 +6,8 @@ from firebase_admin import credentials
 from firebase_admin import db
 import json
 import uuid
+import time
+import dateutil.parser
 
 # Fetch the service account key JSON file contents
 cred = credentials.Certificate('credentials.json')
@@ -18,13 +20,10 @@ ref = db.reference('/')
 async def printstatus(text):
     print(text)
     
-    
-    
-
-async def callBingNews():
+async def callBingNews(cnt):
     url = "https://bing-news-search1.p.rapidapi.com/news"
 
-    querystring = {"originalImg":"true","count":"100","mkt":"en-IN","safeSearch":"Off","category":"ScienceAndTechnology","textFormat":"Raw"}
+    querystring = {"originalImg":"true","count":"100","mkt":cnt,"safeSearch":"Off","category":"ScienceAndTechnology","textFormat":"Raw"}
 
     headers = {
     'x-bingapis-sdk': "true",
@@ -37,12 +36,13 @@ async def callBingNews():
     ls = {}
 
     for news in response.json()["value"]:
-        newsObj = News(news["name"], news["description"], news["image"]["contentUrl"], news["datePublished"], news["url"], news["provider"][0]["name"])
-        ob = json.dumps(newsObj.__dict__)
-        data = json.loads(ob)
-        ls[str(uuid.uuid1())] = data
-    
-    ref.set(ls)
+        if "image" in news.keys():
+            date = (dateutil.parser.parse(news["datePublished"])).strftime("%d %B %Y %I:%M %p")
+            newsObj = News(news["name"], news["description"], news["image"]["contentUrl"], date, news["url"], news["provider"][0]["name"])
+            ob = json.dumps(newsObj.__dict__)
+            data = json.loads(ob)
+            ls[str(uuid.uuid1())] = data
+    ref.push(ls)
 
 async def callNewsCatcher(query):
     url = "https://newscatcher.p.rapidapi.com/v1/latest_headlines"
@@ -74,14 +74,16 @@ async def callWebSearch(query):
         ob = json.dumps(newsObj.__dict__)
         data = json.loads(ob)
         ls[str(news["id"])] = data
-    
-    ref.set(ls)
+
+    ref.push(ls)
+    print("done")
 
 async def main():
-    task1 = asyncio.create_task(callBingNews())
-    # task2 = asyncio.create_task(callNewsCatcher("tech"))
-    # task3 = asyncio.create_task(callNewsCatcher("science"))
-
+    while(True):
+        print("hello")
+        ref.set({})
+        task1 = asyncio.create_task(callBingNews("en-US"))
+        task2 = asyncio.create_task(callBingNews("en-GB"))
+        task3 = asyncio.create_task(callBingNews("en-IN"))
+        await asyncio.sleep(60)
 asyncio.run(main())
-
-# obj = News("kl","","","","","")
