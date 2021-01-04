@@ -1,19 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 
 const Hero = () => {
-
-
-
-
+    const style = {
+        textDecoration: 'none'
+    };
     return (
         <div className="hero-container">
             <div className="top-hero">
                 <img src="./images/heroImg.png" className="top-img" alt="" />
             </div>
+            <Link to="/news" style={style}>
             <div className="top-button">
                 <h1>Start Exploring Digital World</h1>
             </div>
+            </Link>
             <div className="content-box">
                 <div className="content-row1">
                     <div className="row1-left">
@@ -41,13 +43,18 @@ const Hero = () => {
                 </div>
             </div>
             <div className="bottom-hero">
+            
                 <div className="bottom-shape">
+                
                     <h1>Know every aspect of new technology emerging everyday.</h1>
+                    <Link to="/news" style={style}>
+                    <img src="./images/arrow.svg" width="400%" alt="" className="arrow"/>
+                    </Link>
                 </div>
+            
                 <img src="./images/hololens.png" alt="" className="bottom-img"/>
             </div>
             <div className="footer">
-                
             </div>
         </div>
     )

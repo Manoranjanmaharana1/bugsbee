@@ -1,12 +1,15 @@
 import './App.css';
 import Hero from './components/Hero';
-import NewsCard from './components/NewsCard';
-
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import NewsDash from './components/NewsDash';
 function App() {
   return (
-    <div className="App">
-     <Hero/>
-     </div>
+    <Router>
+      <div className="App">
+        <Route path="/" exact component={Hero} />
+        <Route path="/news" exact component={NewsDash} />
+      </div>
+    </Router>
   );
 }
 
